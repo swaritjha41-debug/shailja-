@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Happy Birthday Shailja 🎂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF6EE;
+    --rose:#FF6B9D;
+    --rose-deep:#E44B82;
+    --plum:#8E4DD6;
+    --gold:#FFC94D;
+    --mint:#5FE0C3;
+    --ink:#3B2A3A;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:'Quicksand', sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    overflow:hidden;
+    touch-action:none;
+    user-select:none;
+  }
+  h1,h2,h3,.display{
+    font-family:'Baloo 2', cursive;
+  }
+  #app{
+    position:relative;
+    width:100%;
+    height:100vh;
+    max-height:100vh;
+    overflow:hidden;
+  }
+  .screen{
+    position:absolute;
+    inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:28px 20px;
+    text-align:center;
+    opacity:0;
+    transition:opacity .45s ease;
+  }
+  .screen.active{
+    display:flex;
+    opacity:1;
+  }
+
+  /* ---------- background wash ---------- */
+  .bg-blob{
+    position:absolute; border-radius:50%;
+    filter:blur(40px);
+    opacity:.35;
+    z-index:0;
+  }
+
+  /* ---------- Screen 1 ---------- */
+  #screen1 .bg-blob:nth-child(1){width:260px;height:260px; background:var(--rose); top:-60px; left:-60px;}
+  #screen1 .bg-blob:nth-child(2){width:220px;height:220px; background:var(--plum); bottom:-50px; right:-50px;}
+  .q-text{
+    font-size:clamp(22px,6vw,32px);
+    font-weight:700;
+    margin-bottom:38px;
+    z-index:2;
+    line-height:1.3;
+  }
+  .btn-row{
+    position:relative;
+    width:100%;
+    max-width:360px;
+    height:150px;
+    z-index:2;
+  }
+  .btn{
+    font-family:'Baloo 2', cursive;
+    font-weight:700;
+    font-size:17px;
+    padding:16px 26px;
+    border:none;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 6px 0 rgba(0,0,0,0.12);
+    transition:transform .15s ease;
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,0.12); }
+  .btn-yes{
+    background:var(--rose); color:#fff;
+    position:absolute; left:20px; top:8px;
+  }
+  .btn-no{
+    background:#fff; color:var(--ink);
+    border:2px solid var(--plum);
+    position:absolute; right:10px; top:70px;
+    transition:left .18s ease, top .18s ease, transform .15s ease;
+  }
+  .hint{
+    font-size:13px; opacity:.55; margin-top:14px; z-index:2;
+  }
+
+  /* ---------- Screen reveal / love ---------- */
+  #screenReveal .bg-blob:nth-child(1){width:260px;height:260px; background:var(--plum); top:-60px; left:-60px;}
+  #screenReveal .bg-blob:nth-child(2){width:220px;height:220px; background:var(--rose); bottom:-50px; right:-50px;}
+  #screenLove .bg-blob:nth-child(1){width:280px;height:280px; background:var(--rose); top:-70px; right:-70px;}
+  #screenLove .bg-blob:nth-child(2){width:220px;height:220px; background:var(--gold); bottom:-50px; left:-50px;}
+  .big-figure{
+    font-size:110px; z-index:2; line-height:1;
+    animation:pulseFigure 1.4s ease-in-out infinite;
+  }
+  @keyframes pulseFigure{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.06);} }
+  .heart-board{
+    z-index:2; margin-top:6px;
+    background:#fff; border:3px solid var(--rose-deep);
+    border-radius:16px; padding:14px 22px;
+    font-family:'Baloo 2',cursive; font-weight:800;
+    font-size:clamp(20px,6vw,28px); line-height:1.3;
+    color:var(--rose-deep);
+    box-shadow:0 10px 24px rgba(228,75,130,.25);
+  }
+  .lock-badge{
+    display:block; margin-top:6px; font-size:16px;
+  }
+  .choice-card.locked{ opacity:.55; cursor:not-allowed; }
+  .choice-card.shake{ animation:shake .35s; }
+
+  /* ---------- Screen 2 : choice ---------- */
+  #screen2 .choice-wrap{
+    display:flex; gap:18px; z-index:2; margin-top:10px; flex-wrap:wrap; justify-content:center;
+  }
+  .choice-card{
+    background:#fff;
+    border-radius:22px;
+    padding:22px 20px;
+    width:140px;
+    box-shadow:0 8px 20px rgba(142,77,214,0.15);
+    cursor:pointer;
+    transition:transform .18s ease;
+    border:2px solid transparent;
+  }
+  .choice-card:active{ transform:scale(.95); border-color:var(--rose); }
+  .choice-emoji{ font-size:42px; display:block; margin-bottom:10px; }
+  .choice-label{ font-family:'Baloo 2',cursive; font-weight:700; font-size:15px; }
+
+  /* ---------- Cake screen ---------- */
+  #screenCake{ overflow:hidden; }
+  .lights-strip{
+    position:absolute; top:14px; left:0; right:0;
+    display:flex; justify-content:space-evenly;
+    z-index:1;
+  }
+  .bulb{
+    width:12px;height:12px;border-radius:50%;
+    animation:twinkle 1s infinite alternate;
+  }
+  @keyframes twinkle{ from{opacity:.35; transform:scale(.8);} to{opacity:1; transform:scale(1.15);} }
+  .confetti-piece{
+    position:absolute; top:-20px; width:8px; height:14px;
+    opacity:.9; z-index:1;
+    animation:fall linear infinite;
+  }
+  @keyframes fall{
+    to{ transform:translateY(115vh) rotate(360deg); }
+  }
+  .buddy{
+    position:absolute; bottom:14px; left:16px; z-index:1;
+    text-align:center;
+    font-size:12px;
+    font-weight:700;
+  }
+  .buddy .name-tag{
+    background:var(--plum); color:#fff; padding:2px 10px; border-radius:10px;
+    font-family:'Baloo 2',cursive; margin-bottom:2px; display:inline-block;
+  }
+  .buddy .figure{ font-size:46px; line-height:1; }
+  .buddy .sign{
+    background:#fff; border:2px solid var(--rose-deep); border-radius:8px;
+    font-size:9px; padding:2px 5px; margin-top:-6px; font-family:'Baloo 2',cursive;
+    display:inline-block;
+  }
+  .hbd-banner{
+    position:relative; z-index:2; margin-top:26px;
+    font-family:'Baloo 2',cursive; font-weight:800;
+    font-size:clamp(18px,5.5vw,24px);
+    color:var(--rose-deep);
+    letter-spacing:.5px;
+  }
+  .cake-title{
+    position:relative; z-index:2;
+    font-family:'Baloo 2',cursive; font-weight:700;
+    font-size:clamp(15px,4.2vw,18px);
+    background:#fff; border-radius:14px;
+    padding:8px 16px; margin-top:6px;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);
+    max-width:280px;
+  }
+  .cake-zone{
+    position:relative; z-index:2;
+    margin-top:20px;
+    touch-action:none;
+  }
+  #cakeSvg{ width:220px; height:auto; display:block; }
+  .swipe-hint{
+    font-size:12px; opacity:.6; margin-top:8px; z-index:2;
+  }
+  .plate-wrap{
+    position:absolute; z-index:3; top:38%; left:50%;
+    transform:translate(-50%,-50%) scale(0);
+    transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+    text-align:center;
+  }
+  .plate-wrap.show{ transform:translate(-50%,-50%) scale(1); }
+  .plate-wrap .mouth{ font-size:44px; display:block; margin-bottom:-6px; }
+  .plate-wrap .plate{ font-size:52px; display:block; }
+  .next-fab{
+    position:absolute; bottom:18px; right:18px; z-index:5;
+    background:var(--rose-deep); color:#fff; border:none;
+    padding:12px 20px; border-radius:999px; font-family:'Baloo 2',cursive;
+    font-weight:700; font-size:14px; box-shadow:0 6px 14px rgba(0,0,0,.18);
+    opacity:0; pointer-events:none; transition:opacity .3s ease;
+  }
+  .next-fab.show{ opacity:1; pointer-events:auto; }
+
+  /* ---------- Gift screen ---------- */
+  #screenGift h2{ font-size:22px; margin-bottom:6px; z-index:2; }
+  #screenGift .sub{ font-size:13px; opacity:.65; margin-bottom:26px; z-index:2; }
+  .boxes-row{
+    display:flex; align-items:flex-end; gap:22px; z-index:2;
+  }
+  .gift-box{
+    cursor:pointer; text-align:center; transition:transform .2s ease, opacity .3s ease;
+  }
+  .gift-box .box-emoji{ display:block; }
+  .gift-box[data-size="big"] .box-emoji{ font-size:78px; }
+  .gift-box[data-size="mid"] .box-emoji{ font-size:60px; }
+  .gift-box[data-size="small"] .box-emoji{ font-size:44px; }
+  .gift-box .box-num{
+    margin-top:6px; font-size:11px; font-weight:700; opacity:.5;
+  }
+  .gift-box.done{ opacity:.25; transform:scale(.85) rotate(-6deg); pointer-events:none; }
+  .gift-box.shake{ animation:shake .35s; }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);}
+  }
+
+  /* ---------- Letter overlay (promise) ---------- */
+  .overlay{
+    position:absolute; inset:0; z-index:20;
+    background:rgba(59,42,58,.55);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .35s ease;
+    padding:24px;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .letter-card{
+    background:#FFFDF8; border-radius:18px; padding:26px 22px;
+    max-width:320px; width:100%;
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+    transform:translateY(20px) scale(.96);
+    transition:transform .35s ease;
+    max-height:80vh; overflow-y:auto;
+  }
+  .overlay.show .letter-card{ transform:translateY(0) scale(1); }
+  .letter-card p{ font-size:14.5px; line-height:1.65; text-align:left; margin:0 0 12px; }
+  .letter-card .sign-off{ font-family:'Baloo 2',cursive; font-weight:700; font-size:16px; }
+  .package-strip{
+    margin-top:14px; background:var(--cream); border:2px dashed var(--rose);
+    border-radius:12px; padding:10px 12px; text-align:left; font-size:12.5px;
+  }
+  .package-strip b{ font-family:'Baloo 2',cursive; }
+  .overlay .btn{ margin-top:16px; }
+  .love-card{
+    background:linear-gradient(180deg,#FFF0F5 0%, #FFFDF8 55%);
+    border:1px solid #FFD3E4;
+  }
+  .big-box-wrap{ margin-bottom:14px; }
+  .script-line{
+    font-family:'Baloo 2',cursive; font-weight:700; font-size:17px;
+    color:var(--rose-deep); text-align:center !important; margin-bottom:10px !important;
+  }
+
+  /* ---------- Final letter screen ---------- */
+  #screenFinal{ overflow:hidden; }
+  .heart{ position:absolute; z-index:0; opacity:.7; animation:floatUp linear infinite; }
+  @keyframes floatUp{
+    from{ transform:translateY(10vh) scale(1); opacity:.7; }
+    to{ transform:translateY(-110vh) scale(1.3); opacity:0; }
+  }
+  .final-card{
+    background:#FFFDF8; border-radius:20px; padding:26px 22px;
+    max-width:340px; width:100%;
+    box-shadow:0 16px 34px rgba(0,0,0,.18);
+    z-index:2;
+    max-height:82vh; overflow-y:auto;
+  }
+  .final-card h2{ font-size:24px; margin:0 0 14px; color:var(--rose-deep); }
+  .final-card p{ font-size:14.5px; line-height:1.7; text-align:left; margin:0 0 12px; }
+  .final-card .sign-off{ font-family:'Baloo 2',cursive; font-weight:700; font-size:17px; margin-top:6px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- SCREEN 1 -->
+  <div class="screen active" id="screen1">
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+    <div class="q-text">Aaj kisi ka<br>birthday hai 🎈</div>
+    <div class="btn-row">
+      <button class="btn btn-yes" id="btnYes">haan hai! 😄</button>
+      <button class="btn btn-no" id="btnNo">nahi hai bhakk 😤</button>
+    </div>
+    <div class="hint">(try pressing the second one 👀)</div>
+  </div>
+
+  <!-- SCREEN REVEAL -->
+  <div class="screen" id="screenReveal">
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+    <div class="q-text">Ek cheez dikhani hai...</div>
+    <div class="btn-row">
+      <button class="btn btn-yes" id="btnShow">dikhao ji 👀</button>
+      <button class="btn btn-no" id="btnHide">hatt suaar, mujhe kuch nahi dekhna 🙄</button>
+    </div>
+  </div>
+
+  <!-- SCREEN LOVE REVEAL -->
+  <div class="screen" id="screenLove">
+    <div class="bg-blob"></div>
+    <div class="bg-blob"></div>
+    <div class="big-figure">🧑</div>
+    <div class="heart-board">I ❤️ YOU<br>SHAILJA</div>
+    <button class="btn btn-yes" id="loveNext" style="position:static; margin-top:30px;">Next &rarr;</button>
+  </div>
+
+  <!-- SCREEN 2 : choice -->
+  <div class="screen" id="screen2">
+    <h2>Pehle kya karein?</h2>
+    <div class="choice-wrap">
+      <div class="choice-card" id="choiceCake">
+        <span class="choice-emoji">🎂</span>
+        <span class="choice-label">Cake pehle</span>
+      </div>
+      <div class="choice-card locked" id="choiceGift">
+        <span class="choice-emoji">🎁</span>
+        <span class="choice-label">Gift pehle</span>
+        <span class="lock-badge">🔒</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN CAKE -->
+  <div class="screen" id="screenCake">
+    <div class="lights-strip" id="lightsStrip"></div>
+    <div class="hbd-banner">🎉 HAPPY BIRTHDAY 🎉</div>
+    <div class="cake-title">Pagli, dekh kya rahi hai... kaat na! 😆🔪</div>
+    <div class="buddy">
+      <div class="name-tag">Swarit</div>
+      <div class="figure">🧑</div>
+      <div class="sign">Happy Birthday 🎉</div>
+    </div>
+
+    <div class="cake-zone" id="cakeZone">
+      <svg id="cakeSvg" viewBox="0 0 220 170">
+        <!-- flames -->
+        <ellipse cx="60" cy="30" rx="4" ry="8" fill="#FFC94D"/>
+        <ellipse cx="110" cy="24" rx="4" ry="8" fill="#FFC94D"/>
+        <ellipse cx="160" cy="30" rx="4" ry="8" fill="#FFC94D"/>
+        <!-- candles -->
+        <rect x="57" y="38" width="6" height="20" fill="#FF6B9D"/>
+        <rect x="107" y="32" width="6" height="26" fill="#5FE0C3"/>
+        <rect x="157" y="38" width="6" height="20" fill="#8E4DD6"/>
+        <!-- top layer -->
+        <rect x="30" y="58" width="160" height="40" rx="10" fill="#FFF1E6" stroke="#E44B82" stroke-width="3"/>
+        <!-- bottom layer -->
+        <rect x="15" y="98" width="190" height="55" rx="12" fill="#FFD6E8" stroke="#E44B82" stroke-width="3"/>
+        <!-- drips -->
+        <circle cx="45" cy="98" r="7" fill="#FF6B9D"/>
+        <circle cx="95" cy="98" r="7" fill="#FFC94D"/>
+        <circle cx="145" cy="98" r="7" fill="#5FE0C3"/>
+        <circle cx="185" cy="98" r="7" fill="#FF6B9D"/>
+      </svg>
+    </div>
+    <div class="swipe-hint">👇 finger se neeche swipe karo cake pe</div>
+
+    <div class="plate-wrap" id="plateWrap">
+      <span class="mouth">😋</span>
+      <span class="plate">🍰</span>
+    </div>
+
+    <button class="next-fab" id="cakeNext">Aage &rarr;</button>
+  </div>
+
+  <!-- SCREEN GIFT -->
+  <div class="screen" id="screenGift">
+    <h2>Ab gift khol! 🎁</h2>
+    <div class="sub">bade wale se shuru karo, chhote pe khatam</div>
+    <div class="boxes-row">
+      <div class="gift-box" data-size="big" data-order="1">
+        <span class="box-emoji">🎁</span>
+        <span class="box-num">1</span>
+      </div>
+      <div class="gift-box" data-size="mid" data-order="2">
+        <span class="box-emoji">🎁</span>
+        <span class="box-num">2</span>
+      </div>
+      <div class="gift-box" data-size="small" data-order="3">
+        <span class="box-emoji">🎁</span>
+        <span class="box-num">3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- promise overlay -->
+  <div class="overlay" id="promiseOverlay">
+    <div class="letter-card love-card">
+      <div class="big-box-wrap">
+        <svg viewBox="0 0 240 200" width="100%" style="max-width:220px; display:block; margin:0 auto;">
+          <ellipse cx="120" cy="182" rx="90" ry="10" fill="#E44B82" opacity="0.12"/>
+          <rect x="30" y="80" width="180" height="100" rx="10" fill="#FF6B9D"/>
+          <rect x="30" y="80" width="180" height="100" rx="10" fill="url(#dots)"/>
+          <rect x="30" y="70" width="180" height="26" rx="6" fill="#E44B82"/>
+          <rect x="105" y="70" width="30" height="110" fill="#FFDDE9"/>
+          <rect x="30" y="70" width="180" height="14" fill="#FFDDE9"/>
+          <path d="M120 70 C90 30, 40 45, 60 68 C40 45, 100 20, 120 70 Z" fill="#FFC94D"/>
+          <path d="M120 70 C150 30, 200 45, 180 68 C200 45, 140 20, 120 70 Z" fill="#FFC94D"/>
+          <circle cx="120" cy="70" r="10" fill="#FFE8A3"/>
+          <defs>
+            <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+              <circle cx="6" cy="6" r="2.4" fill="#FFDDE9" opacity="0.55"/>
+            </pattern>
+          </defs>
+          <text x="45" y="35" font-size="20">✨</text>
+          <text x="185" y="30" font-size="18">💗</text>
+          <text x="20" y="65" font-size="16">🎀</text>
+        </svg>
+      </div>
+      <p class="script-line">Yaar dekh na... 🥺</p>
+      <p>Milenge toh tere liye <b>chann-chann karne wali churiyan</b> aur ek <b>saree</b> lekar aaunga — bilkul tere jaisi khoobsurat 💕</p>
+      <p>Yeh gift abhi haathon mein nahi de sakta, par dil se pakka hai — jab milenge, tab zaroor milega 🤍</p>
+      <div class="package-strip">
+        🎁 <b>Saree + Churi</b><br>
+        Delivery date: <i>jab milenge tab</i> 🫶
+      </div>
+      <button class="btn btn-yes" id="promiseNext" style="margin-top:16px; position:static;">Aage &rarr;</button>
+    </div>
+  </div>
+
+  <!-- FINAL LETTER -->
+  <div class="screen" id="screenFinal">
+    <div class="final-card">
+      <h2>Shailja yaar 🎂</h2>
+      <p>Happiest birthday. Hamesha khush rehna aur haste rehna — tere smile se zyaada mujhe aur kuch pasand nahi. Bas khush reh yaar 🫶</p>
+      <p>Aur jo abhi tune mera proposal accept kiya hai, uske liye thank you. Par sach mein — agar tu mujhe sirf ek friend ki tarah consider karti hai toh please bata dena, main tujhse waisi hi baat karunga, koi problem nahi 🙂</p>
+      <p>Aur yeh ho gayi paglo waali baatein... ab paglii gadhi, happy birthday, hehehehe karti reh 😂🎉</p>
+      <div class="sign-off">— Swarit</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const screens = {
+    1: document.getElementById('screen1'),
+    reveal: document.getElementById('screenReveal'),
+    love: document.getElementById('screenLove'),
+    2: document.getElementById('screen2'),
+    cake: document.getElementById('screenCake'),
+    gift: document.getElementById('screenGift'),
+    final: document.getElementById('screenFinal')
+  };
+  function show(key){
+    Object.values(screens).forEach(s=>s.classList.remove('active'));
+    screens[key].classList.add('active');
+  }
+
+  /* ---- generic runaway-button behaviour ---- */
+  function setupFlee(btn){
+    const container = btn.closest('.btn-row');
+    function flee(){
+      const rw = container.clientWidth, rh = container.clientHeight;
+      const bw = btn.offsetWidth, bh = btn.offsetHeight;
+      const maxL = Math.max(rw - bw, 10);
+      const maxT = Math.max(rh - bh, 10);
+      const l = Math.random()*maxL;
+      const t = Math.random()*maxT;
+      btn.style.left = l + 'px';
+      btn.style.top = t + 'px';
+      btn.style.right = 'auto';
+    }
+    btn.addEventListener('pointerenter', flee);
+    btn.addEventListener('touchstart', function(e){ e.preventDefault(); flee(); }, {passive:false});
+    btn.addEventListener('pointerdown', function(e){ e.preventDefault(); flee(); });
+  }
+  setupFlee(document.getElementById('btnNo'));
+  setupFlee(document.getElementById('btnHide'));
+
+  document.getElementById('btnYes').addEventListener('click', ()=> show('reveal'));
+  document.getElementById('btnShow').addEventListener('click', ()=> show('love'));
+  document.getElementById('loveNext').addEventListener('click', ()=> show(2));
+
+  /* ---- Choice screen: cake works, gift is locked ---- */
+  document.getElementById('choiceCake').addEventListener('click', ()=>{
+    show('cake');
+    initCakeScreen();
+  });
+  document.getElementById('choiceGift').addEventListener('click', function(){
+    this.classList.add('shake');
+    setTimeout(()=> this.classList.remove('shake'), 350);
+  });
+
+  /* ---- Cake screen setup (lights + confetti) ---- */
+  let cakeInit = false;
+  function initCakeScreen(){
+    if(cakeInit) return;
+    cakeInit = true;
+    const colors = ['#FF6B9D','#FFC94D','#5FE0C3','#8E4DD6','#FF9F5B'];
+    const strip = document.getElementById('lightsStrip');
+    for(let i=0;i<10;i++){
+      const b = document.createElement('div');
+      b.className='bulb';
+      b.style.background = colors[i%colors.length];
+      b.style.animationDelay = (Math.random()*0.8)+'s';
+      strip.appendChild(b);
+    }
+    const cakeScreen = document.getElementById('screenCake');
+    for(let i=0;i<26;i++){
+      const c = document.createElement('div');
+      c.className='confetti-piece';
+      c.style.left = Math.random()*100+'%';
+      c.style.background = colors[i%colors.length];
+      c.style.animationDuration = (2.5 + Math.random()*2.5)+'s';
+      c.style.animationDelay = (Math.random()*3)+'s';
+      c.style.transform = 'rotate('+Math.floor(Math.random()*360)+'deg)';
+      cakeScreen.appendChild(c);
+    }
+    setupSwipe();
+  }
+
+  /* ---- swipe-down to cut cake ---- */
+  function setupSwipe(){
+    const zone = document.getElementById('cakeZone');
+    const cakeSvg = document.getElementById('cakeSvg');
+    const plate = document.getElementById('plateWrap');
+    const nextBtn = document.getElementById('cakeNext');
+    let startY = null;
+    let cut = false;
+
+    function pointerDown(e){
+      startY = (e.touches ? e.touches[0].clientY : e.clientY);
+    }
+    function pointerMove(e){
+      if(startY===null || cut) return;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY);
+      if(y - startY > 55){
+        cut = true;
+        doCut();
+      }
+    }
+    function doCut(){
+      cakeSvg.style.transition = 'transform .3s ease';
+      cakeSvg.style.transform = 'translateY(4px)';
+      plate.classList.add('show');
+      nextBtn.classList.add('show');
+    }
+    zone.addEventListener('mousedown', pointerDown);
+    window.addEventListener('mousemove', pointerMove);
+    zone.addEventListener('touchstart', pointerDown, {passive:true});
+    zone.addEventListener('touchmove', pointerMove, {passive:true});
+  }
+
+  document.getElementById('cakeNext').addEventListener('click', ()=> show('gift'));
+
+  /* ---- Gift boxes ---- */
+  let expected = 1;
+  const boxes = Array.from(document.querySelectorAll('.gift-box'));
+  boxes.forEach(box=>{
+    box.addEventListener('click', ()=>{
+      const order = parseInt(box.dataset.order,10);
+      if(order === expected){
+        box.classList.add('done');
+        expected++;
+        if(expected === 4){
+          setTimeout(()=> document.getElementById('promiseOverlay').classList.add('show'), 350);
+        }
+      } else {
+        box.classList.add('shake');
+        setTimeout(()=> box.classList.remove('shake'), 350);
+      }
+    });
+  });
+
+  document.getElementById('promiseNext').addEventListener('click', ()=>{
+    document.getElementById('promiseOverlay').classList.remove('show');
+    show('final');
+    initFinalHearts();
+  });
+
+  /* ---- Final hearts ---- */
+  let heartsInit = false;
+  function initFinalHearts(){
+    if(heartsInit) return;
+    heartsInit = true;
+    const wrap = document.getElementById('screenFinal');
+    const emojis = ['💗','💕','✨','🎉'];
+    for(let i=0;i<20;i++){
+      const h = document.createElement('div');
+      h.className='heart';
+      h.textContent = emojis[i % emojis.length];
+      h.style.left = Math.random()*100+'%';
+      h.style.fontSize = (14 + Math.random()*16)+'px';
+      h.style.animationDuration = (4 + Math.random()*4)+'s';
+      h.style.animationDelay = (Math.random()*4)+'s';
+      wrap.appendChild(h);
+    }
+  }
+})();
+</script>
+</body>
+</html>
